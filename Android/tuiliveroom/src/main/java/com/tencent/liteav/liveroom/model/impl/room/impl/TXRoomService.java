@@ -1442,9 +1442,9 @@ public class TXRoomService implements ITXRoomService {
                     delegate.onRoomInfoChange(mTXRoomInfo);
                     for (IMAnchorInfo info : pair.second) {
                         delegate.onRoomAnchorEnter(info.userId);
-                        if (!TextUtils.isEmpty(info.streamId)) {
-                            delegate.onRoomStreamAvailable(info.userId);
-                        }
+                        // if (!TextUtils.isEmpty(info.streamId)) {
+                        //    delegate.onRoomStreamAvailable(info.userId);
+                        // }
                     }
                 }
             }

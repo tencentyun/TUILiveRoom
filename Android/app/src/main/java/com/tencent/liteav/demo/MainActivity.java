@@ -4,21 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.tencent.liteav.basic.AvatarConstant;
 import com.tencent.liteav.basic.IntentUtils;
-
 import com.tencent.liteav.basic.UserModelManager;
 import com.tencent.liteav.debug.GenerateGlobalConfig;
 import com.tencent.liteav.liveroom.TUILiveRoom;
@@ -104,7 +101,7 @@ public class MainActivity extends Activity {
         findViewById(R.id.tv_enter_room).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int roomId = Integer.parseInt(mRoomIdEt.getText().toString().trim());
+                final String roomId = mRoomIdEt.getText().toString().trim();
                 enterRoom(roomId);
             }
         });
@@ -132,7 +129,7 @@ public class MainActivity extends Activity {
         mLiveVideo.createRoom(roomId, roomName, coverUrl);
     }
 
-    private void enterRoom(final int roomId) {
+    private void enterRoom(final String roomId) {
         mLiveVideo.enterRoom(roomId);
     }
 }

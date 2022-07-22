@@ -36,13 +36,13 @@ public class LiveRoomManager {
         mRoomCallback = null;
     }
 
-    public void createRoom(int roomId, ActionCallback callback) {
+    public void createRoom(String roomId, ActionCallback callback) {
         if (mRoomCallback != null) {
             mRoomCallback.onRoomCreate(roomId, callback);
         }
     }
 
-    public void destroyRoom(int roomId, ActionCallback callback) {
+    public void destroyRoom(String roomId, ActionCallback callback) {
         if (mRoomCallback != null) {
             mRoomCallback.onRoomDestroy(roomId, callback);
         }
@@ -55,9 +55,9 @@ public class LiveRoomManager {
     }
 
     public interface RoomCallback {
-        void onRoomCreate(int roomId, ActionCallback callback);
+        void onRoomCreate(String roomId, ActionCallback callback);
 
-        void onRoomDestroy(int roomId, ActionCallback callback);
+        void onRoomDestroy(String roomId, ActionCallback callback);
 
         void onGetRoomIdList(GetCallback callback);
     }
@@ -71,7 +71,7 @@ public class LiveRoomManager {
 
 
     public interface GetCallback {
-        void onSuccess(List<Integer> list);
+        void onSuccess(List<String> list);
 
         void onError(int code, String message);
     }

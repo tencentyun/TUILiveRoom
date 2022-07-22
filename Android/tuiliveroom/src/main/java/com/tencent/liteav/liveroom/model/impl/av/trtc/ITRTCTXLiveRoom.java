@@ -14,7 +14,7 @@ public interface ITRTCTXLiveRoom {
 
     void setDelegate(ITXTRTCLiveRoomDelegate deleagte);
 
-    void enterRoom(int sdkAppId, int roomId, String userId, String userSign, int role, TXCallback callback);
+    void enterRoom(int sdkAppId, String roomId, String userId, String userSign, int role, TXCallback callback);
 
     void exitRoom(TXCallback callback);
 

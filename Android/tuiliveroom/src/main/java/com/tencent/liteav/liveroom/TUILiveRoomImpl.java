@@ -1,5 +1,8 @@
 package com.tencent.liteav.liveroom;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
@@ -93,6 +96,7 @@ public class TUILiveRoomImpl extends TUILiveRoom {
                     final UserModelManager manager = UserModelManager.getInstance();
                     manager.setUserModel(userModel);
                     Intent intent = new Intent(mContext, TCCameraAnchorActivity.class);
+                    intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(intent);
                 } else {
                     TRTCLogger.e(TAG, msg);
@@ -106,7 +110,7 @@ public class TUILiveRoomImpl extends TUILiveRoom {
     }
 
     @Override
-    public void enterRoom(final int roomId) {
+    public void enterRoom(final String roomId) {
         if (mContext == null) {
             TRTCLogger.e(TAG, "context is null");
             if (mListener != null) {
@@ -115,7 +119,7 @@ public class TUILiveRoomImpl extends TUILiveRoom {
             return;
         }
 
-        if (roomId == 0) {
+        if (TextUtils.isEmpty(roomId)) {
             TRTCLogger.e(TAG, "roomId is empty");
             if (mListener != null) {
                 mListener.onRoomEnter(-1, "roomId is empty");
@@ -172,7 +176,7 @@ public class TUILiveRoomImpl extends TUILiveRoom {
         return result.getResultCode() == 0;
     }
 
-    private void realEnterRoom(final int roomId) {
+    private void realEnterRoom(final String roomId) {
         mLiveRoom.getRoomInfos(Collections.singletonList(roomId), new TRTCLiveRoomCallback.RoomInfoCallback() {
             @Override
             public void onCallback(int code, String msg, List<TRTCLiveRoomDef.TRTCLiveRoomInfo> list) {
@@ -184,17 +188,18 @@ public class TUILiveRoomImpl extends TUILiveRoom {
         });
     }
 
-    private void gotoAudience(int roomId, String anchorId, String anchorName) {
+    private void gotoAudience(String roomId, String anchorId, String anchorName) {
         Intent intent = new Intent(mContext, TCAudienceActivity.class);
         intent.putExtra(TCConstants.GROUP_ID, roomId);
         intent.putExtra(TCConstants.PUSHER_ID, anchorId);
         intent.putExtra(TCConstants.PUSHER_NAME, anchorName);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 
     private void liveVideoLogin(final TRTCLiveRoomCallback.ActionCallback callback) {
         TRTCLiveRoomDef.TRTCLiveRoomConfig config = new TRTCLiveRoomDef.TRTCLiveRoomConfig(false,
-                "http://3891.liveplay.myqcloud.com/live");
+                "");
         mLiveRoom.login(TUILogin.getSdkAppId(), TUILogin.getUserId(),
                 TUILogin.getUserSig(), config, new TRTCLiveRoomCallback.ActionCallback() {
                     @Override

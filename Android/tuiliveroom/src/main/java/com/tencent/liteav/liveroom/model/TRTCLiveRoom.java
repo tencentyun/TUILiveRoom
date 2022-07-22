@@ -97,7 +97,7 @@ public abstract class TRTCLiveRoom {
      *                  you can ignore this parameter.
      * @param callback  Callback for room creation result. The `code` will be 0 if the operation succeeds.
      */
-    public abstract void createRoom(int roomId, TRTCLiveRoomDef.TRTCCreateRoomParam roomParam,
+    public abstract void createRoom(String roomId, TRTCLiveRoomDef.TRTCCreateRoomParam roomParam,
                                     TRTCLiveRoomCallback.ActionCallback callback);
 
     /**
@@ -114,7 +114,7 @@ public abstract class TRTCLiveRoom {
      * @param roomId   Room ID
      * @param callback Result callback for whether room entry succeeds
      */
-    public abstract void enterRoom(int roomId, TRTCLiveRoomCallback.ActionCallback callback);
+    public abstract void enterRoom(String roomId, TRTCLiveRoomCallback.ActionCallback callback);
 
     /**
      * Exits a room
@@ -133,7 +133,7 @@ public abstract class TRTCLiveRoom {
      * @param callback   Callback for room details
      * @see {@link TRTCLiveRoomDef.TRTCLiveRoomInfo}
      */
-    public abstract void getRoomInfos(List<Integer> roomIdList, TRTCLiveRoomCallback.RoomInfoCallback callback);
+    public abstract void getRoomInfos(List<String> roomIdList, TRTCLiveRoomCallback.RoomInfoCallback callback);
 
     /**
      * Gets the anchor and co-anchors in a room. This API works only if it is called after `enterRoom()`.

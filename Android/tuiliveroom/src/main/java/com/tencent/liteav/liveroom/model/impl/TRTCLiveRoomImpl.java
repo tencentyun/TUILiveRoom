@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tencent.liteav.audio.TXAudioEffectManager;
 import com.tencent.liteav.basic.UserModel;
@@ -93,7 +94,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
     private Handler              mDelegateHandler;
 
     private int                                mSDKAppId;
-    private int                                mRoomId;
+    private String                             mRoomId;
     private String                             mUserId;
     private String                             mUserSign;
     private TRTCLiveRoomDef.TRTCLiveRoomConfig mRoomConfig;
@@ -297,17 +298,17 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
     }
 
     @Override
-    public void createRoom(final int roomId, final TRTCLiveRoomDef.TRTCCreateRoomParam roomParam,
+    public void createRoom(final String strRoomId, final TRTCLiveRoomDef.TRTCCreateRoomParam roomParam,
                            final TRTCLiveRoomCallback.ActionCallback callback) {
         runOnMainThread(new Runnable() {
             @Override
             public void run() {
-                TRTCLogger.i(TAG, "create room, room id:" + roomId + " info:" + roomParam);
-                if (roomId == 0) {
+                TRTCLogger.i(TAG, "create room, room id:" + strRoomId + " info:" + roomParam);
+                if (TextUtils.isEmpty(strRoomId)) {
                     TRTCLogger.e(TAG, "create room fail. params invalid");
                     return;
                 }
-                mRoomId = roomId;
+                mRoomId = strRoomId;
                 mCurrentRole = Role.UNKNOWN;
                 mTargetRole = Role.UNKNOWN;
                 mOriginalRole = Role.TRTC_ANCHOR;
@@ -319,12 +320,12 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
                 mTargetRole = Role.TRTC_ANCHOR;
                 final String roomName = (roomParam == null ? "" : roomParam.roomName);
                 final String roomCover = (roomParam == null ? "" : roomParam.coverUrl);
-                TXRoomService.getInstance().createRoom(String.valueOf(roomId), roomName, roomCover, new TXCallback() {
+                TXRoomService.getInstance().createRoom(strRoomId, roomName, roomCover, new TXCallback() {
                     @Override
                     public void onCallback(final int code, final String msg) {
                         TRTCLogger.i(TAG, "create room in service, code:" + code + " msg:" + msg);
                         if (code == 0) {
-                            enterTRTCRoomInner(roomId, mUserId, mUserSign,
+                            enterTRTCRoomInner(strRoomId, mUserId, mUserSign,
                                     TRTCCloudDef.TRTCRoleAnchor, new TRTCLiveRoomCallback.ActionCallback() {
                                         @Override
                                         public void onCallback(final int code, final String msg) {
@@ -424,7 +425,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
                 mRoomLiveStatus = ROOM_STATUS_NONE;
 
                 mAnchorList.clear();
-                mRoomId = 0;
+                mRoomId = "";
                 mJoinAnchorCallbackHolder.setRealCallback(null);
                 mRequestPKHolder.setRealCallback(null);
             }
@@ -432,7 +433,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
     }
 
     @Override
-    public void enterRoom(final int roomId, final TRTCLiveRoomCallback.ActionCallback callback) {
+    public void enterRoom(final String roomId, final TRTCLiveRoomCallback.ActionCallback callback) {
         runOnMainThread(new Runnable() {
             @Override
             public void run() {
@@ -572,7 +573,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
                 });
                 mPlayViewMap.clear();
                 mAnchorList.clear();
-                mRoomId = 0;
+                mRoomId = "";
                 mTargetRole = Role.UNKNOWN;
                 mOriginalRole = Role.UNKNOWN;
                 mCurrentRole = Role.UNKNOWN;
@@ -583,15 +584,15 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
     }
 
     @Override
-    public void getRoomInfos(final List<Integer> roomIdList, final TRTCLiveRoomCallback.RoomInfoCallback callback) {
+    public void getRoomInfos(final List<String> roomIdList, final TRTCLiveRoomCallback.RoomInfoCallback callback) {
         runOnMainThread(new Runnable() {
             @Override
             public void run() {
                 final List<TRTCLiveRoomDef.TRTCLiveRoomInfo> trtcLiveRoomInfoList = new ArrayList<>();
                 TRTCLogger.i(TAG, "start getRoomInfos: " + roomIdList);
                 List<String> strings = new ArrayList<>();
-                for (Integer id : roomIdList) {
-                    strings.add(String.valueOf(id));
+                for (String id : roomIdList) {
+                    strings.add(id);
                 }
                 TXRoomService.getInstance().getRoomInfos(strings, new TXRoomInfoListCallback() {
                     @Override
@@ -752,7 +753,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
                 final String finalStreamId = tempStreamId;
 
                 if (!isTRTCMode()) {
-                    if (mRoomId == 0) {
+                    if (TextUtils.isEmpty(mRoomId)) {
                         TRTCLogger.e(TAG, "start publish error, room id is empty.");
                         if (callback != null) {
                             runOnDelegateThread(new Runnable() {
@@ -1410,13 +1411,13 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
         }
     }
 
-    private void enterTRTCRoomInner(final int roomId, final String userId,
+    private void enterTRTCRoomInner(final String strRoomId, final String userId,
                                     final String userSign, final int role,
                                     final TRTCLiveRoomCallback.ActionCallback callback) {
         TRTCLogger.i(TAG, "enter trtc room.");
         setLiveRoomType(true);
         mTargetRole = Role.TRTC_ANCHOR;
-        TXTRTCLiveRoom.getInstance().enterRoom(mSDKAppId, roomId, userId, userSign, role, new TXCallback() {
+        TXTRTCLiveRoom.getInstance().enterRoom(mSDKAppId, strRoomId, userId, userSign, role, new TXCallback() {
             @Override
             public void onCallback(final int code, final String msg) {
                 TRTCLogger.i(TAG, "enter trtc room finish, code:" + code + " msg:" + msg);
@@ -1451,6 +1452,7 @@ public class TRTCLiveRoomImpl extends TRTCLiveRoom implements ITXTRTCLiveRoomDel
     }
 
     private boolean isTRTCMode() {
+        TRTCLogger.i(TAG, "isTRTCMode mCurrentRole：" + mCurrentRole + " mTargetRole: " + mTargetRole);
         return mCurrentRole == Role.TRTC_ANCHOR || mCurrentRole == Role.TRTC_AUDIENCE
                 || mTargetRole == Role.TRTC_ANCHOR || mTargetRole == Role.TRTC_AUDIENCE;
     }

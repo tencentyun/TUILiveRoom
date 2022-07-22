@@ -91,7 +91,7 @@ public class TCAudienceActivity extends AppCompatActivity {
     private boolean  isUseCDNPlay    = false;
     private boolean  mIsAnchorEnter  = false;
     private boolean  mIsBeingLinkMic = false;
-    private int      mRoomId         = 0;
+    private String   mRoomId         = "";
     private int      mCurrentStatus  = TRTCLiveRoomDef.ROOM_STATUS_NONE;
     private String   mAnchorAvatarURL;
     private String   mAnchorNickname;
@@ -311,7 +311,7 @@ public class TCAudienceActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         isUseCDNPlay = intent.getBooleanExtra(TCConstants.USE_CDN_PLAY, false);
-        mRoomId = intent.getIntExtra(TCConstants.GROUP_ID, 0);
+        mRoomId = intent.getStringExtra(TCConstants.GROUP_ID);
         mAnchorId = intent.getStringExtra(TCConstants.PUSHER_ID);
         mAnchorNickname = intent.getStringExtra(TCConstants.PUSHER_NAME);
         mCoverUrl = intent.getStringExtra(TCConstants.COVER_PIC);

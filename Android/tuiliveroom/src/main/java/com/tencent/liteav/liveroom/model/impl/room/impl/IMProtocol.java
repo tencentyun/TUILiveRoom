@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.tencent.liteav.liveroom.model.impl.base.TRTCLogger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -163,7 +164,7 @@ public class IMProtocol {
             Pair<Integer, List<IMAnchorInfo>> pair = new Pair<>(type, list);
             return pair;
         } catch (JSONException e) {
-            e.printStackTrace();
+            TRTCLogger.d(TAG, "parseGroupInfo fail, group info：" + jsonStr);
         }
         return null;
     }

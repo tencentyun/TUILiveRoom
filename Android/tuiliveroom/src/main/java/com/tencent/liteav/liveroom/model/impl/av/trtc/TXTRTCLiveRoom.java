@@ -42,7 +42,7 @@ public class TXTRTCLiveRoom extends TRTCCloudListener implements ITRTCTXLiveRoom
     private boolean                 mIsInRoom;
     private ITXTRTCLiveRoomDelegate mDelegate;
     private String                  mUserId;
-    private int                     mRoomId;
+    private String                  mRoomId;
     private TRTCCloudDef.TRTCParams mTRTCParams;
     private Map<String, TXCallback> mPlayCallbackMap;
     private Map<String, Runnable>   mPlayTimeoutRunnable;
@@ -76,22 +76,23 @@ public class TXTRTCLiveRoom extends TRTCCloudListener implements ITRTCTXLiveRoom
     }
 
     @Override
-    public void enterRoom(int sdkAppId, int roomId, String userId, String userSign, int role, TXCallback callback) {
+    public void enterRoom(int sdkAppId, String strRoomId,  String userId, String userSign, int role,
+                          TXCallback callback) {
         if (sdkAppId == 0 || TextUtils.isEmpty(userId) || TextUtils.isEmpty(userSign)) {
             TRTCLogger.e(TAG, "enter trtc room fail. params invalid. room id:"
-                    + roomId + " user id:" + userId + " sign is empty:" + TextUtils.isEmpty(userSign));
+                    + strRoomId + " user id:" + userId + " sign is empty:" + TextUtils.isEmpty(userSign));
             if (callback != null) {
                 callback.onCallback(-1,
-                        "enter trtc room fail. params invalid. room id:" + roomId + " user id:"
+                        "enter trtc room fail. params invalid. room id:" + strRoomId + " user id:"
                                 + userId + " sign is empty:" + TextUtils.isEmpty(userSign));
             }
             return;
         }
         mUserId = userId;
-        mRoomId = roomId;
+        mRoomId = strRoomId;
         mOriginRole = role;
         TRTCLogger.i(TAG, "enter room, app id:" + sdkAppId + " room id:"
-                + roomId + " user id:" + userId + " sign:"
+                + strRoomId + " user id:" + userId + " sign:"
                 + TextUtils.isEmpty(userId) + " role:" + role);
         mEnterRoomCallback = callback;
         mTRTCParams = new TRTCCloudDef.TRTCParams();
@@ -99,7 +100,7 @@ public class TXTRTCLiveRoom extends TRTCCloudListener implements ITRTCTXLiveRoom
         mTRTCParams.userId = userId;
         mTRTCParams.userSig = userSign;
         mTRTCParams.role = role;
-        mTRTCParams.roomId = roomId;
+        mTRTCParams.strRoomId = strRoomId;
         internalEnterRoom();
     }
 
@@ -394,7 +395,7 @@ public class TXTRTCLiveRoom extends TRTCCloudListener implements ITRTCTXLiveRoom
             // Set the anchor image position in the mixed image
             TRTCCloudDef.TRTCMixUser mixUser = new TRTCCloudDef.TRTCMixUser();
             mixUser.userId = mUserId;
-            mixUser.roomId = String.valueOf(mRoomId);
+            mixUser.roomId = mRoomId;
             mixUser.zOrder = 1;
             mixUser.x = 0;
             mixUser.y = 0;
@@ -409,7 +410,7 @@ public class TXTRTCLiveRoom extends TRTCCloudListener implements ITRTCTXLiveRoom
             for (TXTRTCMixUser txtrtcMixUser : list) {
                 TRTCCloudDef.TRTCMixUser mixUserTemp = new TRTCCloudDef.TRTCMixUser();
                 mixUserTemp.userId = txtrtcMixUser.userId;
-                mixUserTemp.roomId = txtrtcMixUser.roomId == null ? String.valueOf(mRoomId) : txtrtcMixUser.roomId;
+                mixUserTemp.roomId = txtrtcMixUser.roomId == null ? mRoomId : txtrtcMixUser.roomId;
                 mixUserTemp.streamType = TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG;
                 mixUserTemp.zOrder = 2 + index;
                 if (index < 3) {

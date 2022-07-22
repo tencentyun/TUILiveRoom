@@ -116,8 +116,8 @@ public class AnchorPKSelectView extends BottomSheetDialog {
         mTextEnterRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Integer> list = new ArrayList<>();
-                list.add(Integer.valueOf(mEditRoomId.getText().toString().trim()));
+                List<String> list = new ArrayList<>();
+                list.add(mEditRoomId.getText().toString().trim());
                 TRTCLiveRoom.sharedInstance(mContext).getRoomInfos(list, new TRTCLiveRoomCallback.RoomInfoCallback() {
                     @Override
                     public void onCallback(int code, String msg, List<TRTCLiveRoomDef.TRTCLiveRoomInfo> list) {
@@ -149,7 +149,7 @@ public class AnchorPKSelectView extends BottomSheetDialog {
     public void refreshView() {
         LiveRoomManager.getInstance().getRoomIdList(new LiveRoomManager.GetCallback() {
             @Override
-            public void onSuccess(List<Integer> list) {
+            public void onSuccess(List<String> list) {
                 TRTCLiveRoom.sharedInstance(mContext).getRoomInfos(list, new TRTCLiveRoomCallback.RoomInfoCallback() {
                     @Override
                     public void onCallback(int code, String msg, List<TRTCLiveRoomDef.TRTCLiveRoomInfo> list) {

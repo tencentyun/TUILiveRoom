@@ -80,7 +80,7 @@ public class TCCameraAnchorActivity extends Activity implements TRTCLiveRoomDele
     protected String  mSelfName;
     protected String  mSelfUserId;
     protected String  mRoomName;
-    protected int     mRoomId;
+    protected String  mRoomId;
     protected long    mTotalMemberCount   = 0;
     protected long    mCurrentMemberCount = 0;
     protected long    mHeartCount         = 0;
@@ -161,7 +161,7 @@ public class TCCameraAnchorActivity extends Activity implements TRTCLiveRoomDele
         mPreFunctionView = findViewById(R.id.anchor_pre_function);
         mPreView = findViewById(R.id.anchor_preview);
         mFunctionView = findViewById(R.id.anchor_function_view);
-        mFunctionView.setRoomId(mRoomId + "");
+        mFunctionView.setRoomId(mRoomId);
         if (!TextUtils.isEmpty(mSelfName)) {
             mEditLiveRoomName.setText(getString(R.string.trtcliveroom_create_room_default, mSelfName));
         }
@@ -284,10 +284,10 @@ public class TCCameraAnchorActivity extends Activity implements TRTCLiveRoomDele
         enterRoom();
     }
 
-    private int getRoomId() {
-        int rooId = 0;
+    private String getRoomId() {
+        String rooId = "";
         try {
-            rooId = Integer.parseInt(mSelfUserId);
+            rooId = mSelfUserId;
         } catch (Exception e) {
             TRTCLogger.e(TAG, "getRoomId failed,roomId:" + mSelfUserId + ",msg:" + e.getMessage());
         }
